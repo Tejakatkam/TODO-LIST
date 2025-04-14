@@ -6,48 +6,26 @@
 }
 
 body {
-  background: #fff;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   color: #333;
   line-height: 1.6;
   overflow-x: hidden;
 }
 
-.logo {
-  height: 40px; /* Adjust size as needed */
-  width: auto;
-  transition: transform 0.3s ease;
-}
+/* header {
+  padding: 1rem 2rem;
+  background: #6a0dad;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  text-align: center;
+} */
 
-.logo:hover {
-  transform: scale(1.1);
-}
-
-nav a {
-  color: #666;
-  margin: 0 1rem;
-  text-decoration: none;
-  font-weight: 400;
-  transition: color 0.3s ease;
-}
-
-nav a:hover {
-  color: #6a0dad;
-}
-
-.get-started {
-  background: #ffcc00;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 20px;
+header h1 {
   color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.get-started:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .container {
@@ -63,6 +41,10 @@ nav a:hover {
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
+  background: #fff;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .hero-text h1 {
@@ -141,6 +123,10 @@ nav a:hover {
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .input-section input {
@@ -154,12 +140,31 @@ nav a:hover {
 
 .input-section input:focus {
   border-color: #6a0dad;
+  box-shadow: 0 0 5px rgba(106, 13, 173, 0.5);
 }
 
 #task-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.day-header {
+  background: #6a0dad;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.day-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.day-header p {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .task-card {
@@ -170,6 +175,11 @@ nav a:hover {
   position: relative;
   overflow: hidden;
   animation: fadeIn 0.3s ease;
+  transition: transform 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-5px);
 }
 
 .task-card::before {
@@ -209,9 +219,40 @@ nav a:hover {
   max-height: 100px;
 }
 
+.task-card .status {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.task-card .status input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.task-card.completed h2 {
+  text-decoration: line-through;
+  color: #28a745;
+}
+
+.task-card.not-completed h2 {
+  text-decoration: line-through;
+  color: #dc3545;
+}
+
+.task-card.completed .summary {
+  text-decoration: line-through;
+  color: #28a745;
+}
+
+.task-card.not-completed .summary {
+  text-decoration: line-through;
+  color: #dc3545;
+}
+
 .task-card .actions {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .task-card button {
@@ -227,14 +268,10 @@ nav a:hover {
   color: #ffcc00;
 }
 
-.task-card.completed h2 {
-  text-decoration: line-through;
-  opacity: 0.7;
-}
-
-.task-card.completed .summary {
-  text-decoration: line-through;
-  opacity: 0.7;
+.task-card .time {
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 0.5rem;
 }
 
 .decorative-grass {
@@ -250,6 +287,83 @@ nav a:hover {
 
 .decorative-grass:nth-child(2) {
   left: 30%;
+}
+
+.task-card.completed {
+  animation: partyBlast 1.5s ease-out forwards;
+  animation-play-state: paused;
+}
+
+.task-card.completed.play-animation {
+  animation-play-state: running;
+}
+
+.task-card.completed h2,
+.task-card.completed .summary {
+  animation: textPop 0.5s ease-out;
+  color: #28a745;
+}
+
+.confetti {
+  position: absolute;
+  top: -10px;
+  border-radius: 2px;
+  opacity: 1;
+  animation: confettiPop 1.5s ease-out forwards;
+  transform-origin: bottom;
+}
+
+/* Animations */
+@keyframes partyBlast {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(40, 167, 69, 0.8);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes textPop {
+  0% {
+    transform: scale(1);
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.2);
+    text-shadow: 0 0 15px #28a745, 0 0 25px #ffeb3b;
+  }
+  100% {
+    transform: scale(1);
+    text-shadow: none;
+  }
+}
+
+@keyframes confettiPop {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(0);
+  }
+  20% {
+    opacity: 0.9;
+    transform: translateY(50px) rotate(180deg) scale(1.2);
+  }
+  80% {
+    opacity: 0.7;
+    transform: translateY(150px) rotate(360deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(250px) rotate(720deg) scale(0.5);
+  }
 }
 
 @keyframes fadeIn {
@@ -291,12 +405,8 @@ nav a:hover {
   .hero-text h1 {
     font-size: 2.5rem;
   }
-  nav {
+  header {
     flex-direction: column;
     gap: 0.5rem;
-  }
-  .get-started {
-    width: 100%;
-    margin-top: 1rem;
   }
 }
