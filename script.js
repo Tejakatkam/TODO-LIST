@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="actions">
                     <button class="toggle-btn">▼</button>
                     <button class="edit-btn">✏️</button>
-                    <button class="delete-btn">🗑️ <span class="time">${
+                    <button class="delete-btn">🗑 <span class="time">${
                       task.addedTime
                     }</span></button>
                 </div>
