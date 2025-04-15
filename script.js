@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addedDay: day,
         addedDate: date,
         addedTime: time,
-        remark: "", // Initialize remark as empty
+        remark: "",
       });
       saveTasks();
       renderTasks();
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }</div>
         </div>
         <div class="actions">
-                    <button class="toggle-btn">▼</button>
+          <button class="toggle-btn">▼</button>
                     <button class="edit-btn">✏️</button>
                     <button class="delete-btn">🗑️</button>${
                       task.addedTime
@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const notCompletedCheckbox = div.querySelector(".not-completed-checkbox");
       const remarkInput = div.querySelector(".remark-input");
       const remarkSection = div.querySelector(".remark-section");
+      const remarkDisplay = div.querySelector(".remark-display");
 
       completedCheckbox.addEventListener("change", () => {
         const taskCard = div;
@@ -111,12 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks[index].completed = completedCheckbox.checked;
         tasks[index].notCompleted = false;
         tasks[index].animated = tasks[index].animated || !wasCompleted;
-        tasks[index].remark = ""; // Clear remark when marking completed
+        tasks[index].remark = "";
         saveTasks();
 
         taskCard.classList.toggle("completed", tasks[index].completed);
         taskCard.classList.toggle("not-completed", tasks[index].notCompleted);
-        remarkSection.style.display = "none"; // Hide remark section
+        remarkSection.style.display = "none";
         if (tasks[index].completed && !wasCompleted) {
           createConfetti(taskCard);
         }
@@ -129,15 +130,18 @@ document.addEventListener("DOMContentLoaded", () => {
       notCompletedCheckbox.addEventListener("change", () => {
         tasks[index].notCompleted = notCompletedCheckbox.checked;
         tasks[index].completed = false;
-        tasks[index].animated = false; // Reset animation flag
+        tasks[index].animated = false;
         saveTasks();
-        renderTasks(); // Re-render to show/hide remark input
+        renderTasks();
       });
 
       remarkInput.addEventListener("input", () => {
         tasks[index].remark = remarkInput.value.trim();
+        remarkDisplay.textContent = tasks[index].remark
+          ? `Reason: ${tasks[index].remark}`
+          : "";
         saveTasks();
-        renderTasks(); // Update display
+        // Removed renderTasks() to prevent re-rendering
       });
 
       div.querySelector(".toggle-btn").addEventListener("click", () => {
