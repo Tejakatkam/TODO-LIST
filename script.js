@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addedDay: day,
         addedDate: date,
         addedTime: time,
+        remark: "", // Initialize remark as empty
       });
       saveTasks();
       renderTasks();
@@ -66,31 +67,43 @@ document.addEventListener("DOMContentLoaded", () => {
         task.notCompleted ? "not-completed" : ""
       }`;
       div.innerHTML = `
-                <header>
-                    <h2>${task.title}</h2>
-                </header>
-                <div class="summary">${task.summary || "No summary"}</div>
-                <div class="status">
-                    <label><input type="checkbox" class="completed-checkbox" ${
-                      task.completed ? "checked" : ""
-                    }> Completed</label>
-                    <label><input type="checkbox" class="not-completed-checkbox" ${
-                      task.notCompleted ? "checked" : ""
-                    }> Not Completed</label>
-                </div>
-                <div class="actions">
+        <header>
+          <h2>${task.title}</h2>
+        </header>
+        <div class="summary">${task.summary || "No summary"}</div>
+        <div class="status">
+          <label><input type="checkbox" class="completed-checkbox" ${
+            task.completed ? "checked" : ""
+          }> Completed</label>
+          <label><input type="checkbox" class="not-completed-checkbox" ${
+            task.notCompleted ? "checked" : ""
+          }> Not Completed</label>
+        </div>
+        <div class="remark-section" style="display: ${
+          task.notCompleted ? "block" : "none"
+        };">
+          <input type="text" class="remark-input" placeholder="Reason for not completing" value="${
+            task.remark || ""
+          }" aria-label="Remark">
+          <div class="remark-display">${
+            task.remark ? `Reason: ${task.remark}` : ""
+          }</div>
+        </div>
+        <div class="actions">
                     <button class="toggle-btn">▼</button>
                     <button class="edit-btn">✏️</button>
-                    <button class="delete-btn">🗑 <span class="time">${
+                    <button class="delete-btn">🗑️</button>${
                       task.addedTime
                     }</span></button>
-                </div>
-                <div class="decorative-grass"></div>
-                <div class="decorative-grass"></div>
-            `;
+        </div>
+        <div class="decorative-grass"></div>
+        <div class="decorative-grass"></div>
+      `;
 
       const completedCheckbox = div.querySelector(".completed-checkbox");
       const notCompletedCheckbox = div.querySelector(".not-completed-checkbox");
+      const remarkInput = div.querySelector(".remark-input");
+      const remarkSection = div.querySelector(".remark-section");
 
       completedCheckbox.addEventListener("change", () => {
         const taskCard = div;
@@ -98,9 +111,12 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks[index].completed = completedCheckbox.checked;
         tasks[index].notCompleted = false;
         tasks[index].animated = tasks[index].animated || !wasCompleted;
+        tasks[index].remark = ""; // Clear remark when marking completed
         saveTasks();
 
         taskCard.classList.toggle("completed", tasks[index].completed);
+        taskCard.classList.toggle("not-completed", tasks[index].notCompleted);
+        remarkSection.style.display = "none"; // Hide remark section
         if (tasks[index].completed && !wasCompleted) {
           createConfetti(taskCard);
         }
@@ -108,17 +124,20 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           renderTasks();
         }, 1500);
-        console.log(
-          "Completed class toggled, animated:",
-          tasks[index].animated
-        );
       });
 
       notCompletedCheckbox.addEventListener("change", () => {
         tasks[index].notCompleted = notCompletedCheckbox.checked;
         tasks[index].completed = false;
+        tasks[index].animated = false; // Reset animation flag
         saveTasks();
-        renderTasks();
+        renderTasks(); // Re-render to show/hide remark input
+      });
+
+      remarkInput.addEventListener("input", () => {
+        tasks[index].remark = remarkInput.value.trim();
+        saveTasks();
+        renderTasks(); // Update display
       });
 
       div.querySelector(".toggle-btn").addEventListener("click", () => {
@@ -128,9 +147,13 @@ document.addEventListener("DOMContentLoaded", () => {
       div.querySelector(".edit-btn").addEventListener("click", () => {
         const newTitle = prompt("Edit title:", task.title);
         const newSummary = prompt("Edit summary:", task.summary);
+        const newRemark = task.notCompleted
+          ? prompt("Edit remark:", task.remark)
+          : task.remark;
         if (newTitle && newTitle.trim()) {
           tasks[index].title = newTitle.trim();
           tasks[index].summary = newSummary?.trim() || task.summary;
+          tasks[index].remark = newRemark?.trim() || task.remark;
           saveTasks();
           renderTasks();
         }
