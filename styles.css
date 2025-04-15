@@ -410,3 +410,51 @@ header h1 {
     gap: 0.5rem;
   }
 }
+
+/* Add to the bottom of styles.css or within the existing task-card section */
+.remark-section {
+  margin-top: 1rem;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.remark-input {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+.remark-input:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 5px rgba(106, 13, 173, 0.5);
+}
+
+.remark-display {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.task-card.not-completed .remark-display {
+  color: #dc3545;
+}
+
+/* Update media queries for responsiveness */
+@media (max-width: 768px) {
+  .remark-section {
+    margin-top: 0.5rem;
+  }
+  .remark-input {
+    padding: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .remark-input {
+    font-size: 0.9rem;
+  }
+}
