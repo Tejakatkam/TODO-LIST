@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addedDate: date,
         addedTime: time,
         remark: "",
+        hasSubmittedRemark: false, // Track submission status
       });
       saveTasks();
       renderTasks();
@@ -82,11 +83,20 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="remark-section" style="display: ${
           task.notCompleted ? "block" : "none"
         };">
-          <input type="text" class="remark-input" placeholder="Reason for not completing" value="${
-            task.remark || ""
-          }" aria-label="Remark">
+          ${
+            task.notCompleted && !task.hasSubmittedRemark
+              ? `
+                <div class="remark-input-container">
+                  <input type="text" class="remark-input" placeholder="Reason for not completing" aria-label="Reason">
+                  <button class="remark-submit">Submit</button>
+                </div>
+              `
+              : ""
+          }
           <div class="remark-display">${
-            task.remark ? `Reason: ${task.remark}` : ""
+            task.remark && task.hasSubmittedRemark
+              ? `Reason: ${task.remark}`
+              : ""
           }</div>
         </div>
         <div class="actions">
@@ -103,8 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const completedCheckbox = div.querySelector(".completed-checkbox");
       const notCompletedCheckbox = div.querySelector(".not-completed-checkbox");
       const remarkInput = div.querySelector(".remark-input");
-      const remarkSection = div.querySelector(".remark-section");
-      const remarkDisplay = div.querySelector(".remark-display");
+      const remarkSubmit = div.querySelector(".remark-submit");
 
       completedCheckbox.addEventListener("change", () => {
         const taskCard = div;
@@ -113,11 +122,12 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks[index].notCompleted = false;
         tasks[index].animated = tasks[index].animated || !wasCompleted;
         tasks[index].remark = "";
+        tasks[index].hasSubmittedRemark = false;
         saveTasks();
 
         taskCard.classList.toggle("completed", tasks[index].completed);
         taskCard.classList.toggle("not-completed", tasks[index].notCompleted);
-        remarkSection.style.display = "none";
+        taskCard.querySelector(".remark-section").style.display = "none";
         if (tasks[index].completed && !wasCompleted) {
           createConfetti(taskCard);
         }
@@ -131,18 +141,23 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks[index].notCompleted = notCompletedCheckbox.checked;
         tasks[index].completed = false;
         tasks[index].animated = false;
+        if (!tasks[index].notCompleted) {
+          tasks[index].remark = "";
+          tasks[index].hasSubmittedRemark = false;
+        }
         saveTasks();
         renderTasks();
       });
 
-      remarkInput.addEventListener("input", () => {
-        tasks[index].remark = remarkInput.value.trim();
-        remarkDisplay.textContent = tasks[index].remark
-          ? `Reason: ${tasks[index].remark}`
-          : "";
-        saveTasks();
-        // Removed renderTasks() to prevent re-rendering
-      });
+      if (remarkSubmit) {
+        remarkSubmit.addEventListener("click", () => {
+          const reason = remarkInput.value.trim();
+          tasks[index].remark = reason;
+          tasks[index].hasSubmittedRemark = reason !== ""; // Only true if reason is non-empty
+          saveTasks();
+          renderTasks();
+        });
+      }
 
       div.querySelector(".toggle-btn").addEventListener("click", () => {
         div.classList.toggle("active");
@@ -152,12 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const newTitle = prompt("Edit title:", task.title);
         const newSummary = prompt("Edit summary:", task.summary);
         const newRemark = task.notCompleted
-          ? prompt("Edit remark:", task.remark)
+          ? prompt("Edit reason:", task.remark)
           : task.remark;
         if (newTitle && newTitle.trim()) {
           tasks[index].title = newTitle.trim();
           tasks[index].summary = newSummary?.trim() || task.summary;
           tasks[index].remark = newRemark?.trim() || task.remark;
+          tasks[index].hasSubmittedRemark =
+            task.notCompleted && (newRemark?.trim() || task.remark)
+              ? true
+              : false;
           saveTasks();
           renderTasks();
         }
@@ -185,7 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
       confetti.style.left = `${Math.random() * 100}%`;
       confetti.style.background = `linear-gradient(45deg, ${getRandomColor()}, ${getRandomColor()})`;
       confetti.style.width = `${6 + Math.random() * 6}px`;
-      confetti.style.height = `${15 + Math.random() * 10}px`;
+      const height = 15 + Math.random() * 10;
+      confetti.style.height = `${height}px`;
       confetti.style.animationDelay = `${i * 0.1}s`;
       taskCard.appendChild(confetti);
       setTimeout(() => confetti.remove(), 1500);
